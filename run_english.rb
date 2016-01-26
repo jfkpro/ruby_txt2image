@@ -2,7 +2,8 @@
 require 'RMagick'
 
 
-ALPHABET="abcdefghijklmnopqrstuvwxyz0123456789"
+ALPHABET="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+#ALPHABET="abcdefghijklmnopqrstuvwxyz0123456789"
 FONTS=Dir["/Library/Fonts/*.tt*"]
 DIR="english_chars"
 SIZE_OFFSET=10
