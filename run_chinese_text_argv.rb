@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
-require 'RMagick'
+require 'rmagick'
 
 
 ALPHABET="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 #ALPHABET="abcdefghijklmnopqrstuvwxyz0123456789"
-FONTS=Dir["/Library/Fonts/*.tt*"]
+FONTS=Dir["chn_fonts/*"]
 DIR="coded_refined_chinese_text_argv_chars_#{Time.now.to_i}"
 SIZE_OFFSET=8
 
@@ -44,7 +44,7 @@ text.split("").uniq.each do |chr|
   manifest.write("#{chr.to_code} #{chr}\n")
   f_cnt=0
   FONTS.each do |f|
-    if ok_chinese_font_idx.include? f_cnt
+    if true #ok_chinese_font_idx.include? f_cnt
       SIZE_OFFSET.times do |offset|
         fn = "#{this_dir}/unicode#{chr.to_code}_#{f_cnt}_#{offset}.png"
         draw_image fn, chr, f, 190+offset * 2
@@ -57,6 +57,6 @@ text.split("").uniq.each do |chr|
 end
 
 
-`cd #{DIR}; sh ../rm_chinese_fail_chars.sh`
+#`cd #{DIR}; sh ../rm_chinese_fail_chars.sh`
 
 manifest.close
