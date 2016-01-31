@@ -7,20 +7,27 @@ ALPHABET="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 FONTS=Dir["chn_fonts/*"]
 DIR="coded_refined_chinese_text_argv_chars_#{Time.now.to_i}"
 SIZE_OFFSET=8
-
-ok_chinese_font_idx=[6, 7, 17, 24, 67, 71, 72, 82, 88, 92, 95, 108, 115, 116, 118, 137, 155, 156, 166, 167, 168, 170, 171, 172, 173, 174, 175]
+ROTATE=15
 
 text = File.read(ARGV[0])
 
-def draw_image fn, text, font, fontsize=200
-  xsize = 256
+NOISE_TYPES = [Magick::UniformNoise, Magick::GaussianNoise,
+               Magick::MultiplicativeGaussianNoise,
+               Magick::ImpulseNoise, Magick::LaplacianNoise,
+               Magick::PoissonNoise]
+
+def draw_image fn, text, font, fontsize=200, rotate=0 
+  xsize = 200
   canvas = Magick::Image.new(xsize, xsize){self.background_color = 'white'}
   gc = Magick::Draw.new
   gc.pointsize=fontsize
   gc.font = font
-  gc.text((xsize-fontsize)/2, fontsize, text)
-
+  gc.gravity = Magick::CenterGravity
+  #gc.text((xsize-fontsize)/2, fontsize, text)
+  gc.text(0, 0, text)
   gc.draw(canvas)
+  canvas = canvas.rotate(rotate)
+  #canvas = canvas.add_noise(NOISE_TYPES[1])
   canvas.write(fn)
 end
 
@@ -46,10 +53,13 @@ text.split("").uniq.each do |chr|
   FONTS.each do |f|
     if true #ok_chinese_font_idx.include? f_cnt
       SIZE_OFFSET.times do |offset|
-        fn = "#{this_dir}/unicode#{chr.to_code}_#{f_cnt}_#{offset}.png"
-        draw_image fn, chr, f, 190+offset * 2
-        draw_cnt = draw_cnt + 1 
-        puts "#{draw_cnt} #{fn} drawn"
+        ROTATE.times do |r|
+          angle = ((rand - 0.5) * r).round(1)
+          fn = "#{this_dir}/unicode#{chr.to_code}_#{f_cnt}_#{offset}_#{(angle*10).round}.png"
+          draw_image fn, chr, f, 96+offset * 12, angle
+          draw_cnt = draw_cnt + 1 
+          puts "#{draw_cnt} #{fn} drawn"
+        end
       end
     end
     f_cnt = f_cnt + 1
